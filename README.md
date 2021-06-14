@@ -5,3 +5,5 @@ This is code for generating the microcode used for the display and the instructi
 It's based on the code at [beneater/eeprom-programmer](https://github.com/beneater/eeprom-programmer).
 
 The main propose is to generate binaries that can be written with the [minipro](https://github.com/blurpy/minipro) chip programmer instead of using the Arduino.
+
+The microcode is available in the [eeprom](eeprom) folder as well.

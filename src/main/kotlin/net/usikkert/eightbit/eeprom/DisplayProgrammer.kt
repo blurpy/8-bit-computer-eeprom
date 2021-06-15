@@ -1,6 +1,6 @@
 package net.usikkert.eightbit.eeprom
 
-import java.lang.Math.abs
+import kotlin.math.abs
 
 fun main() {
     val programmer = DisplayProgrammer(2048)
@@ -25,13 +25,13 @@ class DisplayProgrammer(eepromSize: Int): Programmer(eepromSize) {
         println("Programming tens place")
 
         for (value in 0..255) {
-            addToEEPROM(value + 256, digits[value / 10 % 10])
+            addToEEPROM(value + 256, digits[(value / 10) % 10])
         }
 
         println("Programming hundreds place")
 
         for (value in 0..255) {
-            addToEEPROM(value + 512, digits[value / 100 % 10])
+            addToEEPROM(value + 512, digits[(value / 100) % 10])
         }
 
         println("Programming sign")

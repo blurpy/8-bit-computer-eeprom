@@ -18,13 +18,13 @@ class InstructionDecoderProgrammer(eepromSize: Int): Programmer(eepromSize) {
     val II  = 0b0000010000000000  // Instruction register in
     val AI  = 0b0000001000000000  // A register in
     val AO  = 0b0000000100000000  // A register out
-    val EO  = 0b0000000010000000  // ALU out
-    val SU  = 0b0000000001000000  // ALU subtract
+    val SO  = 0b0000000010000000  // ALU sum out
+    val SM  = 0b0000000001000000  // ALU subtract (S-)
     val BI  = 0b0000000000100000  // B register in
     val OI  = 0b0000000000010000  // Output register in
     val CE  = 0b0000000000001000  // Program counter enable
     val CO  = 0b0000000000000100  // Program counter out
-    val J   = 0b0000000000000010  // Jump (program counter in)
+    val CJ  = 0b0000000000000010  // Jump (program counter in)
     val FI  = 0b0000000000000001  // Flags in
 
     val FLAGS_Z0C0 = 0
@@ -38,11 +38,11 @@ class InstructionDecoderProgrammer(eepromSize: Int): Programmer(eepromSize) {
     val UCODE_TEMPLATE = arrayOf(
         intArrayOf( MI or CO,  RO or II or CE,  0,         0,         0,                     0, 0, 0 ),   // 0000 - NOP
         intArrayOf( MI or CO,  RO or II or CE,  IO or MI,  RO or AI,  0,                     0, 0, 0 ),   // 0001 - LDA
-        intArrayOf( MI or CO,  RO or II or CE,  IO or MI,  RO or BI,  EO or AI or FI,        0, 0, 0 ),   // 0010 - ADD
-        intArrayOf( MI or CO,  RO or II or CE,  IO or MI,  RO or BI,  EO or AI or SU or FI,  0, 0, 0 ),   // 0011 - SUB
+        intArrayOf( MI or CO,  RO or II or CE,  IO or MI,  RO or BI,  SO or AI or FI,        0, 0, 0 ),   // 0010 - ADD
+        intArrayOf( MI or CO,  RO or II or CE,  IO or MI,  RO or BI,  SO or AI or SM or FI,  0, 0, 0 ),   // 0011 - SUB
         intArrayOf( MI or CO,  RO or II or CE,  IO or MI,  AO or RI,  0,                     0, 0, 0 ),   // 0100 - STA
         intArrayOf( MI or CO,  RO or II or CE,  IO or AI,  0,         0,                     0, 0, 0 ),   // 0101 - LDI
-        intArrayOf( MI or CO,  RO or II or CE,  IO or J,   0,         0,                     0, 0, 0 ),   // 0110 - JMP
+        intArrayOf( MI or CO,  RO or II or CE,  IO or CJ,  0,         0,                     0, 0, 0 ),   // 0110 - JMP
         intArrayOf( MI or CO,  RO or II or CE,  0,         0,         0,                     0, 0, 0 ),   // 0111 - JC
         intArrayOf( MI or CO,  RO or II or CE,  0,         0,         0,                     0, 0, 0 ),   // 1000 - JZ
         intArrayOf( MI or CO,  RO or II or CE,  0,         0,         0,                     0, 0, 0 ),   // 1001
@@ -62,16 +62,16 @@ class InstructionDecoderProgrammer(eepromSize: Int): Programmer(eepromSize) {
 
         // ZF = 0, CF = 1
         ucode[FLAGS_Z0C1] = UCODE_TEMPLATE.deepCopy()
-        ucode[FLAGS_Z0C1][JC][2] = IO or J
+        ucode[FLAGS_Z0C1][JC][2] = IO or CJ
 
         // ZF = 1, CF = 0
         ucode[FLAGS_Z1C0] = UCODE_TEMPLATE.deepCopy()
-        ucode[FLAGS_Z1C0][JZ][2] = IO or J
+        ucode[FLAGS_Z1C0][JZ][2] = IO or CJ
 
         // ZF = 1, CF = 1
         ucode[FLAGS_Z1C1] = UCODE_TEMPLATE.deepCopy()
-        ucode[FLAGS_Z1C1][JC][2] = IO or J
-        ucode[FLAGS_Z1C1][JZ][2] = IO or J
+        ucode[FLAGS_Z1C1][JC][2] = IO or CJ
+        ucode[FLAGS_Z1C1][JZ][2] = IO or CJ
     }
 
     fun fill() {
